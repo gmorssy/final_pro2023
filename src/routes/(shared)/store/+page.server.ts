@@ -3,7 +3,7 @@ import type { Game } from "$lib/interfaces/store";
 import type { Actions } from "./$types";
 import { redirect } from "@sveltejs/kit";
 
-export async function load() {
+export async function load({ locals }) {
     let games = await database.game.findMany();
     let newGames: Game[] = [];
 
@@ -12,7 +12,8 @@ export async function load() {
     }
 
     return {
-        games: newGames
+        games: newGames,
+        session: locals.session
     };
 }
 
@@ -26,14 +27,22 @@ export const actions: Actions = {
         if (session) {
             const users = await database.user.findUnique({ where: { session } });
 
-            const updateUser = await database.user.update({
-                where: {
-                    session,
-                },
-                data: {
-                    cart: users.cart + item + ";"
-                },
-            })
+            let newCart = users?.cart.split(";");
+            newCart?.pop();
+            newCart?.shift();
+
+
+
+            if (users && newCart?.indexOf(item!) == -1) {
+                const updateUser = await database.user.update({
+                    where: {
+                        session,
+                    },
+                    data: {
+                        cart: users.cart + item + ";"
+                    },
+                })
+            }
 
         }
 

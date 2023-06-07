@@ -73,9 +73,11 @@
                         />
                         <button id="up" style="width: 64%;">SIGN IN</button>
 
-                        <p style="color: red; text-align: center;">
-                            {form?.error}
-                        </p>
+                        {#if form?.error}
+                            <p style="color: red; text-align: center;">
+                                {form?.error}
+                            </p>
+                        {/if}
                     </form>
                 {/if}
 
@@ -127,9 +129,11 @@
                             style="width: 64%;">SIGN UP</button
                         >
 
-                        <p style="color: red; text-align: center;">
-                            {form?.error}
-                        </p>
+                        {#if form?.error}
+                            <p style="color: red; text-align: center;">
+                                {form?.error}
+                            </p>
+                        {/if}
                     </form>
                 {/if}
             </div>

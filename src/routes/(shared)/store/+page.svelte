@@ -8,10 +8,15 @@
     cart?.pop();
     cart?.shift();
 
-    console.log(cart);
+    function totalCart(cart: string[]) {
+        if (cart.length > 10) {
+            return "9+";
+        } else {
+            return cart.length;
+        }
+    }
 
     let filterValue: string = "";
-    let filter = ["hello"];
 
     let showCart: boolean = false;
 </script>
@@ -26,7 +31,7 @@
         <div id="middle">
             <input type="text" id="filter" bind:value={filterValue} />
 
-            {#if showCart}
+            {#if !showCart && data.session}
                 <button
                     class="add-button cart-button"
                     style="margin-top: 10px;"
@@ -37,14 +42,16 @@
                         class="fa fa-shopping-cart"
                         style="color: white; font-size: 34px;"
                     >
-                        <p class="cart-number">
-                            {cart}
-                        </p>
+                        {#if cart}
+                            <p class="cart-number">
+                                {totalCart(cart)}
+                            </p>
+                        {/if}
                     </i>
                 </button>
             {/if}
 
-            {#if !showCart}
+            {#if showCart && data.session}
                 <div class="cart-menu">
                     <button
                         class="add-button cart-button"
@@ -56,12 +63,19 @@
                             class="fa fa-shopping-cart"
                             style="color: white; font-size: 34px;"
                         >
-                            <p class="cart-number">1</p>
+                            {#if cart}
+                                <p class="cart-number">
+                                    {totalCart(cart)}
+                                </p>
+                            {/if}
                         </i>
                     </button>
                     {#if cart}
                         {#each cart as item}
-                            <p>- hello</p>
+                            <a href="/store/{item}">
+                                {data.games.find((e) => e.id.toString() == item)
+                                    ?.title}
+                            </a>
                             <div class="line" />
                         {/each}
                     {/if}
@@ -82,18 +96,19 @@
                 }}
             >
                 {#if game.showMore}
-                    <p
+                    <a
+                        href="/store/{game.id}"
                         class="title"
                         in:fade={{ duration: 200 }}
-                        out:fade={{ duration: 200 }}
+                        out:fade={{ duration: 200 }}>{game.title}</a
                     >
-                        {game.title}
-                    </p>
                     <form use:enhance method="POST" action="?/cart">
                         <input type="hidden" name="item" value={game.id} />
                         <button
                             on:click={() => {
-                                setTimeout(() => {}, 1000);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 100);
                             }}
                             class="cart"
                             in:fade={{ duration: 200 }}
@@ -130,7 +145,8 @@
         display: grid;
     }
 
-    p {
+    p,
+    a {
         text-transform: uppercase;
         font-family: "Anton", sans-serif;
     }
@@ -237,10 +253,9 @@
 
         background-size: contain;
         background-repeat: no-repeat;
+        background-size: cover;
 
         filter: drop-shadow(0 0 5px rgb(96, 96, 96));
-
-        cursor: pointer;
 
         transition: all 0.2s;
     }

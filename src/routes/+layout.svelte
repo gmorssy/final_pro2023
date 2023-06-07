@@ -7,9 +7,8 @@
     <div class="align">
         <a href="/">home</a>
         <a href="/store">store</a>
-        <a href="/forums">forums</a>
         {#if data.username}
-            <a href="/account">{data.username}</a>
+            <a href="/account">account</a>
         {:else}
             <a href="/login">login</a>
         {/if}

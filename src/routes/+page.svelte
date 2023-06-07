@@ -3,11 +3,6 @@
 
     export let data;
 
-    let news = [
-        { title: "hello world", subtitle: "Best thing ever!", button: "" },
-        { title: "fun game", subtitle: "", button: "PLAY NOW!" },
-    ];
-
     let fadeIn = true;
 
     setTimeout(() => {
@@ -23,9 +18,13 @@
                     <p id="title">{news.title}</p>
                     <p id="subtitle">{news.subtitle}</p>
                     {#if news.button != ""}
-                        <button id="button">{news.button}</button>
+                        <a href="/store/{news.id}">
+                            <button id="button">{news.button}</button>
+                        </a>
                     {:else}
-                        <button id="button">CHECK OUT</button>
+                        <a href="/store/{news.id}">
+                            <button id="button">CHECK OUT</button>
+                        </a>
                     {/if}
                 </div>
                 <svg>
