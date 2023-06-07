@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @unique @default(autoincrement())
+  email         String    @unique
+  username      String    @unique
+  salt          String    @unique
+  hash          String    @unique
+  session       String    @unique
+  cart          String    @unique
+  messages      Message[] @relation("messages")
+  favoriteChats Chat[]    @relation("favoriteChats")
+  likes         Message[] @relation("likes")
+}
+
+model Game {
+  id          Int    @id @unique @default(autoincrement())
+  title       String @unique
+  subtitle    String @unique
+  description String @unique
+  image       String @unique
+  button      String @unique
+}
+
+model Forums {
+  id          Int    @id @unique @default(autoincrement())
+  title       String @unique
+  game        String @unique
+  date        String @unique
+  description String @unique
+}
+
+model Chat {
+  id          Int       @id @unique @default(autoincrement())
+  name        String    @unique
+  messages    Message[]
+  favoritedBy User[]    @relation("favoriteChats")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  authorId  Int?
+  chatId    Int?
+  content   String
+  timestamp DateTime @default(now())
+  own       Boolean?
+  liked     Boolean?
+  chat      Chat?    @relation(fields: [chatId], references: [id])
+  author    User?    @relation("messages", fields: [authorId], references: [id])
+  likedBy   User[]   @relation("likes")
+}
