@@ -14,7 +14,7 @@ model User {
   salt          String    @unique
   hash          String    @unique
   session       String    @unique
-  cart          String
+  cart          String?
   messages      Message[] @relation("messages")
   favoriteChats Chat[]    @relation("favoriteChats")
   likes         Message[] @relation("likes")

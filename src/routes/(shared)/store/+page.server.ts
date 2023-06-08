@@ -26,20 +26,30 @@ export const actions: Actions = {
 
         if (session) {
             const users = await database.user.findUnique({ where: { session } });
+            let newCart;
+            let cartStr = "";
 
-            let newCart = users?.cart.split(";");
-            newCart?.pop();
-            newCart?.shift();
+            if (users?.cart == undefined) {
+                newCart = "";
+            }
 
+            else {
+                newCart = users?.cart.split(";");
+                newCart?.pop();
 
+                for (let i = 0; i < newCart.length; i++) {
+                    cartStr += newCart[i];
+                    cartStr += ";";
+                }
+            }
 
-            if (users && newCart?.indexOf(item!) == -1) {
+            if (item && users && newCart?.indexOf(item!) == -1) {
                 const updateUser = await database.user.update({
                     where: {
                         session,
                     },
                     data: {
-                        cart: users.cart + item + ";"
+                        cart: cartStr + item + ";"
                     },
                 })
             }

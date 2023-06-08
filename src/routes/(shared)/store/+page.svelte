@@ -8,7 +8,6 @@
 
     let cart = data.cart?.split(";");
     cart?.pop();
-    cart?.shift();
 
     function totalCart(cart: string[]) {
         if (cart.length > 10) {

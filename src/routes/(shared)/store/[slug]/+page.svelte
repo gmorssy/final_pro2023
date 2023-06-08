@@ -5,7 +5,6 @@
 
     let cart = data.cart?.split(";");
     cart?.pop();
-    cart?.shift();
 </script>
 
 <link

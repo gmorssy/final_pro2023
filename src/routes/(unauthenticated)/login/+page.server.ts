@@ -51,7 +51,7 @@ export const actions: Actions = {
 
 
                         const user = await database.user.create({
-                            data: { email, username, salt, hash, session, cart: ";" },
+                            data: { email, username, salt, hash, session },
                         });
 
                         cookies.set("session", user.session, {
