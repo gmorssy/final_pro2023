@@ -4,6 +4,8 @@
 
     export let data;
 
+    let games = data.games;
+
     let cart = data.cart?.split(";");
     cart?.pop();
     cart?.shift();
@@ -16,7 +18,33 @@
         }
     }
 
+    $: {
+        games = filter(filterValue);
+    }
+
     let filterValue: string = "";
+
+    function filter(filter: string) {
+        let letters = filter.split("");
+        let newGames = [];
+
+        for (let i = 0; i < data.games.length; i++) {
+            newGames.push(data.games[i]);
+        }
+
+        for (let i = 0; i < newGames.length; i++) {
+            for (let j = 0; j < letters.length; j++) {
+                if (
+                    newGames[i]?.title[j].toLocaleLowerCase() !=
+                    letters[j].toLocaleLowerCase()
+                ) {
+                    newGames.splice(i, 1);
+                }
+            }
+        }
+
+        return newGames;
+    }
 
     let showCart: boolean = false;
 </script>
@@ -29,7 +57,12 @@
 <main>
     <div id="menu">
         <div id="middle">
-            <input type="text" id="filter" bind:value={filterValue} />
+            <input
+                type="text"
+                id="filter"
+                placeholder="Filter"
+                bind:value={filterValue}
+            />
 
             {#if !showCart && data.session}
                 <button
@@ -84,7 +117,7 @@
         </div>
     </div>
     <div id="content">
-        {#each data.games as game}
+        {#each games as game}
             <div
                 class="card"
                 style="background-image: url('{game.image}')"
@@ -221,11 +254,6 @@
 
     .cart-button {
         background-image: linear-gradient(rgb(0, 162, 255), rgb(0, 145, 255));
-    }
-
-    .search-button {
-        background-image: linear-gradient(rgb(255, 0, 255), rgb(217, 0, 255));
-        margin: 10px 10px 0;
     }
 
     .cart-menu {

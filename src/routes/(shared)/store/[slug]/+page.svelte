@@ -1,6 +1,17 @@
 <script lang="ts">
+    import { enhance } from "$app/forms";
+
     export let data;
+
+    let cart = data.cart?.split(";");
+    cart?.pop();
+    cart?.shift();
 </script>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
 
 <main>
     <div id="content">
@@ -12,6 +23,31 @@
             <div class="text">
                 <p class="title">{data.game.title}</p>
                 <p>{data.game.description}</p>
+                {#if cart?.indexOf(data.game.id.toString()) == -1}
+                    <form use:enhance method="POST" action="?/cart">
+                        <input type="hidden" name="item" value={data.game.id} />
+
+                        <button
+                            class="cart shop"
+                            on:click={() => {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 100);
+                            }}
+                            >Cart<i
+                                class="fa fa-shopping-cart"
+                                style="color: white; font-size: 34px;"
+                            /></button
+                        >
+                    </form>
+                {:else}
+                    <button class="cart shopped"
+                        >Shopped<i
+                            class="fa fa-shopping-cart"
+                            style="color: white; font-size: 34px;"
+                        /></button
+                    >
+                {/if}
             </div>
         </div>
     </div>
@@ -22,6 +58,8 @@
 
     :global(body) {
         margin: 0;
+
+        overflow-y: hidden;
     }
 
     main {
@@ -34,6 +72,29 @@
 
         display: flex;
         flex-direction: column;
+    }
+
+    .cart {
+        width: 6em;
+        height: 2em;
+        font-size: 24px;
+        text-transform: uppercase;
+        font-family: "Anton", sans-serif;
+
+        color: white;
+
+        border: 0 solid white;
+        border-radius: 0.5em;
+    }
+
+    .shop {
+        background-image: linear-gradient(rgb(0, 162, 255), rgb(0, 145, 255));
+
+        cursor: pointer;
+    }
+
+    .shopped {
+        background-color: gray;
     }
 
     #content {

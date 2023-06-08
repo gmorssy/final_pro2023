@@ -4,6 +4,8 @@ import { database } from "$lib/ssr";
 
 export const load: PageServerLoad = async ({ locals }) => {
     const chats = await database.chat.findMany();
+    const games = await database.game.findMany();
+
     const favoriteChats = await database.user.findUniqueOrThrow({
         where: { session: locals.session },
         select: {
@@ -11,20 +13,43 @@ export const load: PageServerLoad = async ({ locals }) => {
         },
     });
 
-    return { chats, favoriteChats: favoriteChats.favoriteChats.map((e) => e.id) };
+    return { chats, games, favoriteChats: favoriteChats.favoriteChats.map((e: any) => e.id) };
 };
 
 export const actions: Actions = {
-    add: async ({ request }) => {
+    add: async ({ request, locals }) => {
         const form = await request.formData();
         const forumname = form.get("chatname")?.toString();
+        const forumtag = form.get("tag")?.toString();
+        const forumgame = form.get("game")?.toString();
+        const forumdescription = form.get("description")?.toString();
+
+        let author = "";
+
         if (!forumname) {
             return fail(400, { error: "missing chat name" });
         } else {
             try {
-                await database.chat.create({
-                    data: { name: forumname },
-                });
+                console.log(forumgame);
+                console.log(forumtag);
+                console.log(forumdescription);
+
+                const session = locals.session;
+                const users = await database.user.findUnique({ where: { session } });
+
+                if (users) {
+                    author = users.username;
+                }
+
+                if ((forumtag && forumgame && forumdescription) || (forumtag && forumgame && forumdescription == "")) {
+                    await database.chat.create({
+                        data: { name: forumname, tag: forumtag, description: forumdescription, author, game: forumgame },
+                    });
+                }
+
+                else {
+                    return fail(400, { error: "something went wrong" });
+                }
             } catch (e) {
                 return fail(400, { error: "chat creation error" });
             }

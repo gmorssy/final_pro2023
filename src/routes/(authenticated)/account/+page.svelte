@@ -5,8 +5,10 @@
 </script>
 
 <main>
-    <h1>aa</h1>
-    <h1>aa</h1>
+    <h1 style="color:transparent">a</h1>
+    <h1 style="color:transparent">a</h1>
+    <h1 />
+
     <form method="POST" action="?/logout">
         <button>LOGOUT</button>
     </form>

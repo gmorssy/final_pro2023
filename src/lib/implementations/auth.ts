@@ -30,11 +30,11 @@ export class SQLiteAuth implements Auth {
         const password = form.get("password")?.toString();
 
         if (!email) {
-            return { error: { code: 400, data: { username: "e-mail missing" } } };
+            return { error: { code: 400, data: { error: "E-mail is missing" } } };
         }
 
         if (!password) {
-            return { error: { code: 400, data: { password: "password missing" } } };
+            return { error: { code: 400, data: { error: "Password is missing" } } };
         }
 
         try {
@@ -42,13 +42,11 @@ export class SQLiteAuth implements Auth {
                 where: { email },
             });
 
-            console.log(result);
-
             if (!result) {
                 return {
                     error: {
                         code: 400,
-                        data: { user: "wrong credentials" },
+                        data: { error: "Wrong credentials" },
                     },
                 };
             }
@@ -61,7 +59,7 @@ export class SQLiteAuth implements Auth {
                 return {
                     error: {
                         code: 400,
-                        data: { user: "wrong credentials" },
+                        data: { error: "Wrong credentials" },
                     },
                 };
             }
@@ -77,11 +75,10 @@ export class SQLiteAuth implements Auth {
 
             return { success: { session: update.session } };
         } catch (e) {
-            console.log(e);
             return {
                 error: {
                     code: 400,
-                    data: { server: "database connection error" },
+                    data: { error: "Database connection error" },
                 },
             };
         }

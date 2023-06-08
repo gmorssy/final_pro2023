@@ -53,21 +53,6 @@ export const actions: Actions = {
                         where: { session: locals.session },
                     });
                     try {
-                        /*            const markdownmessage = (
-                          await compile(
-                            message,
-                            remarkPlugins,
-                            // @ts-ignore
-                            rehypePlugins
-                          )
-                        )?.code
-                          // https://github.com/pngwn/MDsveX/issues/392
-                          .replace(
-                            />{@html `<code class="language-/g,
-                            '><code class="language-'
-                          )
-                          .replace(/<\/code>`}<\/pre>/g, "</code></pre>"); */
-
                         const msg = await database.message.create({
                             data: {
                                 authorId: user?.id,
@@ -84,8 +69,6 @@ export const actions: Actions = {
                         const encoded = encoder.encode(
                             "data: " + JSON.stringify(msg) + "\n\n"
                         );
-
-                        console.log(streams);
 
                         for (const session in streams) {
                             /* send messages to all other streams exept own for this chat */

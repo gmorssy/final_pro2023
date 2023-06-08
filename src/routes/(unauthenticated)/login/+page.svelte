@@ -6,7 +6,6 @@
     export let form: ActionData;
 
     let rotateGradient = 0;
-    let changeRGB = 255;
     let showSign = "in";
 
     setInterval(() => {
@@ -27,7 +26,6 @@
                         on:click={() => {
                             if (showSign != "in") {
                                 showSign = "none";
-                                changeRGB = 255;
 
                                 setTimeout(() => {
                                     showSign = "in";
@@ -40,7 +38,6 @@
                         on:click={() => {
                             if (showSign != "up") {
                                 showSign = "none";
-                                changeRGB = 255;
 
                                 setTimeout(() => {
                                     showSign = "up";
@@ -62,14 +59,14 @@
                             name="email"
                             type="email"
                             placeholder="E-MAIL"
-                            style="border-color: rgb(255, {changeRGB}, {changeRGB});"
+                            required
                         />
                         <input
                             id="up"
                             name="password"
                             placeholder="PASSWORD"
                             type="password"
-                            style="border-color: rgb(255, {changeRGB}, {changeRGB});"
+                            required
                         />
                         <button id="up" style="width: 64%;">SIGN IN</button>
 
@@ -93,7 +90,6 @@
                             id="up"
                             name="username"
                             placeholder="USERNAME"
-                            style="border-color: rgb(255, {changeRGB}, {changeRGB});"
                             required
                         />
                         <input
@@ -101,7 +97,6 @@
                             name="email"
                             type="email"
                             placeholder="E-MAIL"
-                            style="border-color: rgb(255, {changeRGB}, {changeRGB});"
                             required
                         />
                         <input
@@ -109,7 +104,6 @@
                             name="password"
                             placeholder="PASSWORD"
                             type="password"
-                            style="border-color: rgb(255, {changeRGB}, {changeRGB});"
                             required
                         />
 
@@ -118,16 +112,9 @@
                             name="password2"
                             placeholder="CONFIRM PASSWORD"
                             type="password"
-                            style="border-color: rgb(255, {changeRGB}, {changeRGB});"
                             required
                         />
-                        <button
-                            on:click={() => {
-                                changeRGB = 0;
-                            }}
-                            id="up"
-                            style="width: 64%;">SIGN UP</button
-                        >
+                        <button id="up" style="width: 64%;">SIGN UP</button>
 
                         {#if form?.error}
                             <p style="color: red; text-align: center;">
@@ -238,6 +225,7 @@
     input {
         background-color: transparent;
         padding-left: 10px;
+        border-color: white;
 
         color: white;
     }

@@ -2,111 +2,127 @@
     import { enhance } from "$app/forms";
     import type { ActionData, PageData } from "./$types";
 
+    let active = false;
+
     export let data: PageData;
     export let form: ActionData;
-
-    let chat = [
-        { text: "I want pizza", from: "1" },
-        { text: "Me too", from: "2" },
-        { text: "I also want pizza", from: "2" },
-        { text: "Give me NOW!!", from: "1" },
-    ];
 </script>
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
 
 <main>
     <div class="items">
-        {#each Array(3) as item}
-            <div class="item">
-                <!--<div class="tag guide">
-                    <p class="tag-text">guide</p>
+        <div class="content">
+            {#each data.chats as chat}
+                <div class="item">
+                    {#if chat.tag == "guide"}
+                        <div class="tag guide">
+                            <p class="tag-text">guide</p>
+                        </div>
+                    {/if}
+                    {#if chat.tag == "idea"}
+                        <div class="tag idea">
+                            <p class="tag-text">idea</p>
+                        </div>
+                    {/if}
+                    {#if chat.tag == "general"}
+                        <div class="tag general">
+                            <p class="tag-text">general</p>
+                        </div>
+                    {/if}
+
+                    <div class="titles">
+                        <p class="item-title">
+                            <a href={"/chat/" + chat.id}>{chat.name}</a>
+                        </p>
+                        <p class="item-subtitle">{chat.game}</p>
+                    </div>
+                    <div class="item-extra">
+                        <p class="item-date">By: {chat.author}</p>
+                    </div>
+
+                    {#if data.favoriteChats.includes(chat.id)}
+                        <form use:enhance action="?/unfavorite" method="post">
+                            <input
+                                type="hidden"
+                                name="chatId"
+                                value={chat.id}
+                            />
+                            <button type="submit"
+                                ><i
+                                    class="fa fa-heart"
+                                    style="color: red;"
+                                /></button
+                            >
+                        </form>
+                    {:else}
+                        <form use:enhance action="?/favorite" method="post">
+                            <input
+                                type="hidden"
+                                name="chatId"
+                                value={chat.id}
+                            />
+                            <button type="submit"
+                                ><i class="fa fa-heart" /></button
+                            >
+                        </form>
+                    {/if}
                 </div>
-                <div class="tag idea">
-                    <p class="tag-text">idea</p>
-                </div>-->
-                <div class="tag general">
-                    <p class="tag-text">general</p>
-                </div>
-                <div class="titles">
-                    <p class="item-title">how to get infinite money in</p>
-                    <p class="item-subtitle">videogame game</p>
-                </div>
-                <div class="item-extra">
-                    <p class="item-date">By: hello23</p>
-                    <p class="item-date">2004-04-14</p>
-                </div>
-            </div>
-        {/each}
+            {/each}
+        </div>
     </div>
     <div class="more">
         <div class="active">
-            <h1 class="active-title">Active people:</h1>
-            {#each Array(9) as player}
-                <p class="active-player">hello2</p>
-                <i
-                    class="fa fa-envelope"
-                    style="font-size:24px; color: white;"
+            <form
+                use:enhance={(e) => e.form.reset()}
+                method="POST"
+                action="?/add"
+                class="add-chat"
+            >
+                <h1>a</h1>
+                <h1>create chat</h1>
+                <input
+                    type="text"
+                    name="chatname"
+                    placeholder="Name"
+                    required
                 />
-            {/each}
-            <p class="active-player">and 99+ more</p>
-        </div>
-        <div class="chat">
-            <div class="chat-box">
-                <h1 class="chat-title">You're chatting with: hello2</h1>
-                {#each chat as words}
-                    {#if words.from == "1"}
-                        <div class="chat-text">
-                            <p class="chat-away">{words.text}</p>
-                        </div>
-                    {:else}
-                        <div class="chat-text">
-                            <p class="chat-you">{words.text}</p>
-                        </div>
-                    {/if}
-                {/each}
-                <form class="chat-send">
-                    <input type="text" />
-                    <button>▸</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <div style="display: flex; flex-direction:column">
-        <h1>Chats</h1>
+                <textarea
+                    name="description"
+                    rows="4"
+                    cols="50"
+                    placeholder="Description"
+                />
 
-        <hr />
-        {#each data.chats as chat}
-            <h1>hel</h1>
-            <h1>he</h1>
+                <labal
+                    >tag
+                    <select name="tag" id="tag">
+                        <option value="general">General</option>
+                        <option value="guide">Guide</option>
+                        <option value="idea">Idea</option>
+                    </select>
+                </labal>
 
-            <div style="display:flex;">
-                <p><a href={"/chat/" + chat.id}>{chat.name}</a></p>
-                {#if data.favoriteChats.includes(chat.id)}
-                    <form action="?/unfavorite" method="post">
-                        <input type="hidden" name="chatId" value={chat.id} />
-                        <button type="submit">unfavorite</button>
-                    </form>
-                {:else}
-                    <form action="?/favorite" method="post">
-                        <input type="hidden" name="chatId" value={chat.id} />
-                        <button type="submit">favorite</button>
-                    </form>
+                <labal
+                    >game
+                    <select name="game" id="game">
+                        {#each data.games as game}
+                            <option value={game.title}>{game.title}</option>
+                        {/each}
+                    </select>
+                </labal>
+
+                <button class="add-chat-button">Add Chat</button>
+                {#if form?.error}
+                    <p style="color: red;">{form.error}</p>
                 {/if}
-            </div>
-        {/each}
+            </form>
+        </div>
     </div>
-
-    <hr />
-
-    <form use:enhance={(e) => e.form.reset()} method="post" action="?/add">
-        <h1>a</h1>
-        <h1>a</h1>
-        <input type="text" name="chatname" placeholder="chat name" id="" />
-        <button type="submit">add forum</button>
-        {#if form?.error}
-            {form.error}
-        {/if}
-    </form>
 </main>
 
 <style>
@@ -120,11 +136,23 @@
             rgba(14, 14, 14, 1)
         );
         background-repeat: no-repeat;
+
+        height: 50em;
+        overflow-y: hidden;
     }
 
     main {
         display: flex;
         flex-direction: row;
+    }
+
+    .content {
+        margin-top: 5em;
+        flex-direction: column;
+
+        height: 40em;
+
+        overflow-y: scroll;
     }
 
     .items {
@@ -134,7 +162,7 @@
 
     .more {
         width: 25%;
-        height: 700px;
+        height: 1000px;
 
         border: 0 solid white;
         border-left-width: 10px;
@@ -142,82 +170,44 @@
         flex-direction: column;
     }
 
-    .chat {
-        display: flex;
-        flex-direction: column;
-
-        height: 350px;
-
-        border: 0 solid white;
-        border-top-width: 5px;
-    }
-
-    .chat-box {
-        display: flex;
-        flex-direction: column;
-
-        gap: 0.5em;
-    }
-
-    .chat-title {
-        text-align: center;
-        font-size: 1.6em;
-    }
-    /*https://ishadeed.com/article/facebook-messenger-chat-component/*/
-    .chat-away {
-        margin: 0;
-        margin-left: 1em;
-
-        background: rgb(136, 136, 136);
-        padding-left: 5px;
-        display: inline;
-        padding-right: 9px;
-        clear: both;
-
-        text-align: center;
-
-        border-radius: 10px;
-    }
-
-    .chat-you {
-        margin: 0;
-        margin-right: 1em;
-
-        background: rgb(0, 121, 255);
-        padding-left: 5px;
-        display: inline;
-        padding-right: 9px;
-        clear: both;
-
-        position: relative;
-        left: 60%;
-
-        justify-self: center;
-
-        border-radius: 10px;
-    }
-
-    .chat-send {
-        display: flex;
-        justify-content: center;
-    }
-
     .active {
-        height: 350px;
-
-        border: 0 solid white;
-        border-bottom-width: 5px;
+        height: 700px;
 
         text-align: center;
     }
 
-    .active-player {
-        margin: 0;
-        font-size: 1.1em;
+    .add-chat {
+        display: flex;
+        flex-direction: column;
+
+        gap: 10px;
     }
 
-    .active-title {
-        margin: 0;
+    button {
+        background-color: black;
+        border-radius: 2em;
+
+        color: white;
+        font-family: "Anton", sans-serif;
+        text-transform: uppercase;
+
+        border: 5px solid white;
+
+        cursor: pointer;
+
+        transition: all 0.2s;
+    }
+
+    button:hover {
+        background-color: white;
+        color: black;
+    }
+
+    .add-chat-button {
+        width: 8em;
+        height: 3em;
+
+        font-size: 1em;
     }
 
     .item {
@@ -235,8 +225,6 @@
         align-items: center;
 
         flex-direction: row;
-
-        cursor: pointer;
     }
 
     .guide {
@@ -265,7 +253,9 @@
     }
 
     p,
-    h1 {
+    h1,
+    a,
+    labal {
         font-family: "Anton", sans-serif;
         text-transform: uppercase;
 
@@ -286,6 +276,7 @@
         display: flex;
         flex-direction: row;
         margin-left: 2em;
+        margin-right: 2em;
 
         gap: 1em;
 

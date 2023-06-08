@@ -20,7 +20,7 @@ export const actions: Actions = {
                 httpOnly: true, // optional for now
                 sameSite: "strict", // optional for now
                 secure: process.env.NODE_ENV === "production", // optional for now
-                maxAge: 120, //
+                maxAge: 1200, //
             });
             throw redirect(302, "/");
         }
@@ -36,35 +36,50 @@ export const actions: Actions = {
         const password2 = form.get("password2")?.toString();
 
         if (username && email && password && password2) {
-            let users = await database.user.findUnique({ where: { username } });
+            const users = await database.user.findUnique({ where: { username } });
+            const mailUser = await database.user.findUnique({ where: { email } });
 
-            if (!users) {
-                const session = crypto.randomUUID();
+            if (password == password2) {
 
-                const salt = crypto.randomBytes(16).toString('hex');
+                if (!users && !mailUser) {
 
-                const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+                    if (password.length >= 8) {
+
+                        const session = crypto.randomUUID();
+                        const salt = crypto.randomBytes(16).toString('hex');
+                        const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 
 
-                const user = await database.user.create({
-                    data: { email, username, salt, hash, session, cart: ";" },
-                });
+                        const user = await database.user.create({
+                            data: { email, username, salt, hash, session, cart: ";" },
+                        });
 
-                cookies.set("session", user.session, {
-                    path: "/",
-                    httpOnly: true, // optional for now
-                    sameSite: "strict", // optional for now
-                    secure: process.env.NODE_ENV === "production", // optional for now
-                    maxAge: 120, //
-                });
-                throw redirect(302, "/");
+                        cookies.set("session", user.session, {
+                            path: "/",
+                            httpOnly: true, // optional for now
+                            sameSite: "strict", // optional for now
+                            secure: process.env.NODE_ENV === "production", // optional for now
+                            maxAge: 1200, //
+                        });
+                        throw redirect(302, "/");
+                    }
+
+                    else {
+                        return fail(400, { error: "Too weak password" });
+                    }
+                }
+
+                else {
+                    return fail(400, { error: "Already used account" });
+                }
+            }
+            else {
+                return fail(400, { error: "Incorrect confirm password" });
             }
         }
         // TODO: Implement register
         // Check if ustername already exist etc.
 
-        return {
-            error: "error my guy",
-        };
+        return fail(400, { error: "Something went wrong" });
     },
 };
